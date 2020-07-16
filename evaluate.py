@@ -17,12 +17,13 @@ def evaluate_agent(q_table, env, num_trials):
     for _ in range(num_trials):
         state = env.reset()
         epochs, num_penalties, reward = 0, 0, 0
+        done = False
 
-        while reward != 20:
+        while not done:
             next_action = select_optimal_action(q_table,
                                                 state,
                                                 env.action_space)
-            state, reward, _, _ = env.step(next_action)
+            state, reward, done, info = env.step(next_action)
 
             if reward == -10:
                 num_penalties += 1

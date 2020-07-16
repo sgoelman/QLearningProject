@@ -17,11 +17,11 @@ NUM_EPISODES = 100000
 
 def update(q_table, env, state):
     if random.uniform(0, 1) > epsilon:
-        action = env.action_space.sample()
+        action = env.action_space.sample()  # Explore action space
     else:
-        action = select_optimal_action(q_table, state, env.action_space)
+        action = select_optimal_action(q_table, state, env.action_space)  # Exploit learned values
 
-    next_state, reward, _, _ = env.step(action)
+    next_state, reward, done, info = env.step(action)
     old_q_value = q_table[state][action]
 
     # Check if next_state has q values already
@@ -37,7 +37,7 @@ def update(q_table, env, state):
     # Finally, update the q_value
     q_table[state][action] = new_q_value
 
-    return next_state, reward
+    return next_state, reward, done
 
 
 def train_agent(q_table, env, num_episodes):
@@ -49,8 +49,10 @@ def train_agent(q_table, env, num_episodes):
 
         epochs = 0
         num_penalties, reward, total_reward = 0, 0, 0
-        while reward != 20:
-            state, reward = update(q_table, env, state)
+        done = False
+
+        while not done:
+            state, reward, done = update(q_table, env, state)
             total_reward += reward
 
             if reward == -10:
