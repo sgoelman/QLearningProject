@@ -1,11 +1,7 @@
 import pickle
-
-
 import click
 import gym
-
-from utils import select_optimal_action
-
+import numpy as np
 
 NUM_EPISODES = 100
 
@@ -18,11 +14,10 @@ def evaluate_agent(q_table, env, num_trials):
         state = env.reset()
         epochs, num_penalties, reward = 0, 0, 0
 
-        while reward != 20:
-            next_action = select_optimal_action(q_table,
-                                                state,
-                                                env.action_space)
-            state, reward, _, _ = env.step(next_action)
+        done = False
+        while not done:
+            next_action = np.argmax(q_table[state])
+            state, reward, done, _ = env.step(next_action)
 
             if reward == -10:
                 num_penalties += 1
